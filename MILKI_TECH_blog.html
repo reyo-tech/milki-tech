@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MILKI_TECH — Barnoota Technology</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#1a75ff"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="MILKI_TECH"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -350,6 +357,53 @@ footer{
 }
 footer span{color:var(--blue);}
 
+/* ===== PWA INSTALL BANNER ===== */
+#install-banner{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:999;
+  background:rgba(13,20,33,0.97);
+  border-top:1px solid rgba(26,117,255,0.35);
+  backdrop-filter:blur(12px);
+  padding:1rem 1.5rem;
+  animation:slideUp 0.4s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+#install-banner.show{display:block;}
+.install-inner{
+  max-width:600px;margin:0 auto;
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+}
+.install-app-info{display:flex;align-items:center;gap:12px;flex:1;}
+.install-app-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;flex-shrink:0;
+}
+.install-app-name{font-weight:700;font-size:0.95rem;color:#fff;}
+.install-app-desc{font-size:0.78rem;color:var(--muted);margin-top:2px;}
+.install-btns{display:flex;gap:0.6rem;align-items:center;}
+.btn-install{
+  padding:0.6rem 1.4rem;
+  background:var(--blue);color:#fff;
+  border:none;border-radius:8px;
+  font-family:var(--body);font-size:0.88rem;font-weight:600;
+  cursor:pointer;transition:all 0.2s;white-space:nowrap;
+}
+.btn-install:hover{background:var(--blue-dark);transform:translateY(-1px);}
+.btn-install-close{
+  background:transparent;border:none;
+  color:var(--muted);font-size:1.3rem;cursor:pointer;
+  padding:4px 8px;border-radius:6px;
+  transition:color 0.2s;
+}
+.btn-install-close:hover{color:#fff;}
+.install-success{
+  display:none;
+  text-align:center;padding:0.8rem;
+  color:var(--green);font-weight:600;font-size:0.9rem;
+}
+
 /* Mobile */
 @media(max-width:640px){
   .nav-links{display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(6,9,15,0.98);padding:1rem;border-bottom:1px solid var(--border);}
@@ -563,6 +617,24 @@ footer span{color:var(--blue);}
   </div>
 </div>
 
+<!-- PWA INSTALL BANNER -->
+<div id="install-banner">
+  <div class="install-inner">
+    <div class="install-app-info">
+      <div class="install-app-icon">🖥️</div>
+      <div>
+        <div class="install-app-name">MILKI_TECH</div>
+        <div class="install-app-desc">📲 App godhii — Bilisaan, Saffisaan!</div>
+      </div>
+    </div>
+    <div class="install-btns">
+      <button class="btn-install" onclick="installApp()">⬇️ Install Godhi</button>
+      <button class="btn-install-close" onclick="closeBanner()" aria-label="Close">✕</button>
+    </div>
+  </div>
+  <div class="install-success" id="install-success">✅ Galatoomaa! App install ta'e.</div>
+</div>
+
 <!-- FOOTER -->
 <footer id="main-footer">
   <p>© 2024 <span>MILKI_TECH</span> — Barnoota Technology · Design by <span>Reyad Mohamad</span></p>
@@ -586,6 +658,46 @@ function showPost(id){
 }
 function toggleMenu(){
   document.getElementById('navLinks').classList.toggle('open');
+}
+
+// ===== PWA INSTALL =====
+let deferredPrompt = null;
+const banner = document.getElementById('install-banner');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(() => banner.classList.add('show'), 2000);
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((result) => {
+    if (result.outcome === 'accepted') {
+      banner.querySelector('.install-inner').style.display = 'none';
+      const s = document.getElementById('install-success');
+      s.style.display = 'block';
+      setTimeout(() => banner.classList.remove('show'), 3000);
+    }
+    deferredPrompt = null;
+  });
+}
+
+function closeBanner() {
+  banner.classList.remove('show');
+}
+
+window.addEventListener('appinstalled', () => {
+  banner.classList.remove('show');
+  deferredPrompt = null;
+});
+
+// Service Worker galmeessi
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
 }
 </script>
 </body>

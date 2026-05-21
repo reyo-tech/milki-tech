@@ -1,0 +1,28 @@
+{
+  "name": "MILKI_TECH — Barnoota Technology",
+  "short_name": "MILKI_TECH",
+  "description": "Barnoota Technology — Kompiitara, Software, fi Teeknoloojii haaraa baradhu",
+  "start_url": "/milki-tech/MILKI_TECH_blog.html",
+  "scope": "/milki-tech/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#06090f",
+  "theme_color": "#1a75ff",
+  "lang": "om",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["education", "technology"]
+}
